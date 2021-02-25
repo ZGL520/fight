@@ -11,6 +11,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   @override
+  void initState() {
+    super.initState();
+    Store().addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -23,13 +31,39 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/about');
+                Navigator.pushNamed(context, '/about',
+                    arguments: {'text': 'page'});
               },
               child: Text('点击吗'),
-            )
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 100),
+              child: Text('${Store().counter}'),
+            ),
+            GestureDetector(
+              onTap: () {
+                Store().add();
+              },
+              child: Text('点击吗'),
+            ),
           ],
         ),
       ),
     );
+  }
+}
+
+class Store extends ChangeNotifier {
+  static final Store _store = Store._internal();
+  factory Store() => _store;
+
+  Store._internal() {
+    print('11');
+  }
+  int counter = 0;
+
+  void add() {
+    counter++;
+    notifyListeners();
   }
 }
